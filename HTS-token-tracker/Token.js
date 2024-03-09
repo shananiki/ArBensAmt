@@ -15,6 +15,7 @@ class Token {
         this.changeUpDown = "=";
         this.value_USD = 0;
         this.value_Liquidity = 0;
+        this.value_alert_USD = -0.0;
     }
 
     async initialize(){
@@ -36,16 +37,23 @@ class Token {
             this.value_USD = newPrice;
         }
         console.log(this.tokenName + " " + this.changeUpDown + " " + this.value_USD);
+        if(this.value_USD === this.value_alert_USD){
+            console.log("Price limit reached.");
+        }
     }
 
+    setValueAlertUSD(value){
+        this.value_alert_USD = value;
+    }
+    getValueAlertUSD(){
+        return this.value_alert_USD;
+    }
     setValueUSD(value){
         this.value_USD = value;
     }
-
     getValueUSD(value){
         return this.value_USD;
     }
-    
     setValueLiquidity(value){
         this.value_Liquidity = value;
     }

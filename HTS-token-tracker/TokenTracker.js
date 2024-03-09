@@ -17,20 +17,16 @@ class TokenTracker {
             token.initialize();
         });
     }
-
     update(){
         this.token_list.forEach(token => {
             token.update();
         });
     }
-
     listTokens(){
         this.token_list.forEach(token => {
             console.log(token.getName());
         });
     }
-
-
 }
 
 module.exports = TokenTracker;
