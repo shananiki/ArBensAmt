@@ -55,7 +55,6 @@ function addItemPrice(db, itemID, price, timestamp) {
     });
 }
 
-
 const db = new sqlite3.Database('items.db');
 const timestamp = new Date().toISOString(); // Use the current timestamp
 
