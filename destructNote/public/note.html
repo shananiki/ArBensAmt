@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nodeNote</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #key_label {
+            display: none;
+        }
+</style>
+</head>
+<body>
+    <h1>nodeNotes</h1>
+    <textarea id="text" rows="10" cols="50"></textarea><br>
+    <button onclick="createNote()">Create</button>
+    <div id="key_label">Note:</div>
+    <div id="key"></div>
+    <button onclick="copyKey()">Copy Key</button>
+    <script>
+    function createNote() {
+        const text = document.getElementById('text').value;
+        fetch('/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `text=${text}`,
+        })
+        .then(response => response.text())
+        .then(key => {
+            document.getElementById('key_label').style.display = 'inline';
+            document.getElementById('key').innerText = `${window.location.href}${key}`;
+        });
+    }
+    function copyKey() {
+        const keyElement = document.getElementById('key');
+        const keyText = keyElement.innerText;
+        
+        // Create a temporary textarea element to copy the text
+        const tempTextarea = document.createElement('textarea');
+        tempTextarea.value = keyText;
+
+        // Append the textarea to the body
+        document.body.appendChild(tempTextarea);
+
+        // Select the text within the textarea
+        tempTextarea.select();
+        tempTextarea.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the selected text
+        document.execCommand('copy');
+
+        // Remove the temporary textarea
+        document.body.removeChild(tempTextarea);
+
+        // Alert the user that the key has been copied
+        alert('Encryption Key Copied!');
+    }
+    </script>
+</body>
+</html>
