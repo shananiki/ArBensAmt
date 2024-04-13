@@ -3,12 +3,21 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto-js');
+const Buffer = require('buffer').Buffer;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+
+function toB64(text){
+    return Buffer.from(text).toString('base64');
+}
+
+function fromB64(text){
+    return Buffer.from(text, 'base64').toString('utf-8');
+}
 
 function encryptText(text, key) {
     return crypto.AES.encrypt(text, key).toString();
@@ -36,37 +45,37 @@ app.get('/', (req, res) => {
 app.post('/create', (req, res) => {
     const note = req.body.note;
     const key = generateRandomString(8);
+    console.log(note);
     //const encryptedNote = encryptText(note, key);
     const fileName = key + '.txt';
-
+    //note = toB64(note.toString());
     //fs.writeFileSync(path.join(__dirname, 'notes', fileName), encryptedNote);
     fs.writeFileSync(path.join(__dirname, 'notes', fileName), note);
     res.send(key);
 });
 
-app.get('/:encryptionkey', (req, res) => {
-    const encryptionKey = req.params.encryptionkey;
-    const filePath = path.join(__dirname, 'notes', `${encryptionKey}.txt`);
-
-    const viewNoteHTML = path.join(__dirname, 'public', `view.html`);
-  
+app.get('/get/:noteKey', (req, res) => {
+    const noteKey = req.params.noteKey;
+    const filePath = path.join(__dirname, 'notes', `${noteKey}.txt`);
+    console.log(noteKey);
     if (fs.existsSync(filePath)) {
         const encryptedText = fs.readFileSync(filePath, 'utf8').trim();
-        //var decryptedText = decryptText(encryptedText, encryptionKey);
-
-        readHTMLFile(viewNoteHTML, (err, html) => {
-        if (err) {
-            res.status(500).send("Internal Server Error");
-            return;
-        }
-
-        const filledHTML = html.replace('{{decryptedText}}', encryptedText);
-
-        res.send(filledHTML);
-        });
+        
+        res.send(encryptedText);
+        
     }else{
         res.send("Note doesn't exist");
     }
+});
+
+app.get('/note/:noteKey', (req, res) => {
+    const noteKey = req.params.noteKey;
+    const filePath = path.join(__dirname, 'notes', `${noteKey}.txt`);
+
+    const viewNoteHTML = path.join(__dirname, 'public', `viewnote.html`);
+  
+   
+    res.sendFile(path.join(__dirname, 'public', 'viewnote.html'));
 });
 
 app.listen(PORT, () => {

@@ -51,12 +51,12 @@
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `text=${text}`,
+            body: `note=${text}`,
         })
         .then(response => response.text())
         .then(key => {
             document.getElementById('key_label').style.display = 'inline';
-            document.getElementById('key').innerText = `${window.location.href}${key}`;
+            document.getElementById('key').innerText = `${window.location.href}/note/${key}`;
         });
     }
     function copyKey() {
