@@ -1,0 +1,41 @@
+@font-face {
+    font-family: 'TFTWindows';
+    src: url('fonts/TFTWindows.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'CuteDino';
+    src: url('fonts/CuteDino.ttf') format('truetype');
+}
+
+body {
+    font-family: 'TFTWindows';
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #716486;
+    color: #bfafa7;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+c {
+    font-family: 'CuteDino';
+}
+
+.download-container {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}

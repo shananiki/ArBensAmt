@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Portfolio Tracker</title>
+    <script src="portfolio.js"></script>  </head>
+<body>
+    <h1>My Crypto Portfolio</h1>
+    <table id="coins-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Ticker</th>
+                <th>Token ID</th>
+            </tr>
+        </thead>
+        <tbody id="coins-data">
+            </tbody>
+    </table>
+
+    <button id="new-token-btn">New Token</button>
+    <div id="new-token-form" style="display: none;">
+        <h2>Add New Token</h2>
+        <form id="add-coin-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
+            <label for="ticker">Ticker:</label>
+            <input type="text" id="ticker" name="ticker" required><br>
+            <label for="tokenID">Token ID:</label>
+            <input type="text" id="tokenID" name="tokenID" required><br>
+            <button type="submit">Add</button>
+        </form>
+    </div>
+</body>
+</html>
