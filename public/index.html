@@ -10,7 +10,14 @@
 	<p>Kommen 'se rein, können 'se rausgucken.</p>
 	<img src="/images/logo.png" alt="App Logo">
 	<div class="download-container">
-		<a href="/downloads/app.apk" download>Download App</a>
+		<button id="tickets-btn">Zum Ticketsystem</button>
 	</div>
-</body>
+	<script>
+	const ticketsBtn = document.getElementById('tickets-btn');
+
+	ticketsBtn.addEventListener('click', () => {
+		window.location.href = "/tickets";
+	});
+	</script>
+	</body>
 </html>

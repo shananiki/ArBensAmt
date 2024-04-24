@@ -31,7 +31,7 @@ c {
     text-align: center;
 }
 
-a {
+#tickets-btn {
     display: inline-block;
     padding: 10px 20px;
     background-color: #4CAF50;
@@ -44,7 +44,7 @@ a {
     border: 1px solid #ddd;
     padding: 10px;
     margin-bottom: 15px;
-  }
+}
   
 #tickets .ticket {
     margin-bottom: 5px;
