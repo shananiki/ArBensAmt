@@ -16,19 +16,27 @@ const db = new sqlite3.Database(db_file);
 
 // App use
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
 
 app.get('/node/', (req, res) => {
-  res.send('Node is working! Version 0.1.20a');
+    res.send('Node is working! Version 0.1.20a');
 });
 
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get('/tickets', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'tickets.html'));
+});
 
+// Route to create a new ticket (sends dummy data for now)
+app.get('/newTicket', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'newTicket.html'));
+});
 
 // Get all tickets
 app.get('/node/ben/getTickets', (req, res) => {
@@ -48,15 +56,15 @@ app.post('/node/ben/newTicket', (req, res) => {
     const description = req.body.description;
     //const status = req.body.status;
     
-    const sql = 'INSERT INTO tickets (name, description, status) VALUES (?, ?, ?)';
-    db.run(sql, [name, ticker, tokenID], (err) => {
+    const sql = 'INSERT INTO tickets (username, description, status) VALUES (?, ?, ?)';
+    db.run(sql, [name, description, 0], (err) => {
         if (err) {
             return res.status(500).json({
                 error: err.message
             });
         }
         res.json({
-            message: 'Coin added successfully'
+            message: 'Ticket wurde erstellt.'
         });
     });
 });
