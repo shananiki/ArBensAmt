@@ -15,5 +15,5 @@ fetch('/node/ben/getTickets')
 
 // Handle new ticket button click
 newTicketBtn.addEventListener('click', () => {
-    window.location.href = "/newTicket";
+    window.location.href = "/newTicket.html";
 });

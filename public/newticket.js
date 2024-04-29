@@ -40,5 +40,5 @@ newTicketForm.addEventListener('submit', (event) => {
 
 backToTicketsBtn.addEventListener('click', () => {
   // Redirect to "/tickets" on click
-  window.location.href = "/tickets";
+  window.location.href = "/tickets.html";
 });
