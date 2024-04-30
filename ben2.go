@@ -6,14 +6,15 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath" // Import the filepath package
-        _ "github.com/mattn/go-sqlite3"
+
+	_ "modernc.org/sqlite"
 )
 
 type Ticket struct {
-	TicketID  int    `json:"ticketID"`
-	Username  string `json:"username"`
+	TicketID    int    `json:"ticketID"`
+	Username    string `json:"username"`
 	Description string `json:"description"`
-	Status    int    `json:"status"`
+	Status      int    `json:"status"`
 }
 
 func serveStatic(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +27,7 @@ func serveStatic(w http.ResponseWriter, r *http.Request) {
 
 func getTickets(w http.ResponseWriter, r *http.Request) {
 	// Open the database connection
-	db, err := sql.Open("sqlite3", "das_amt.db")
+	db, err := sql.Open("sqlite", "das_amt.db")
 	if err != nil {
 		fmt.Println("Error opening database connection:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -71,6 +72,68 @@ func getTickets(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
+func newTicketHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Decode the request body into a map
+	var data map[string]interface{}
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&data); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Error decoding request body: %v", err)
+		return
+	}
+
+	// Extract data from the request body
+	name, ok := data["creatorName"].(string)
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Missing required field: creatorName")
+		return
+	}
+	description, ok := data["description"].(string)
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Missing required field: description")
+		return
+	}
+
+	// Open a database connection (replace with your connection logic)
+	db, err := sql.Open("sqlite", "das_amt.db")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error opening database connection: %v", err)
+		return
+	}
+	defer db.Close()
+
+	// Prepare the SQL statement with placeholders
+	sql := "INSERT INTO tickets (username, description, status) VALUES (?, ?, ?)"
+
+	// Execute the insert query with parameters
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error preparing SQL statement: %v", err)
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(name, description, 0)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error inserting ticket: %v", err)
+		return
+	}
+
+	// Respond with success message
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Ticket created successfully")
+}
+
 func main() {
 	// Define the port to listen on
 	port := ":3000"
@@ -78,6 +141,7 @@ func main() {
 	// Register the handler for all requests
 	http.HandleFunc("/", serveStatic)
 	http.HandleFunc("/node/ben/getTickets", getTickets)
+	http.HandleFunc("/node/ben/newTicket", newTicketHandler)
 	// Start the server
 	fmt.Println("Server listening on port", port)
 	if err := http.ListenAndServe(port, nil); err != nil {

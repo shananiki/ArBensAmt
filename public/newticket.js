@@ -21,7 +21,14 @@ newTicketForm.addEventListener('submit', (event) => {
     },
     body: JSON.stringify(data),
   })
-  .then(response => response.json())
+  .then(response => {
+    if (response.ok) {
+      return response.json(); // Only proceed if response is OK
+    } else {
+      // Handle non-200 status codes
+      throw new Error(`Error: HTTP status code ${response.status}`);
+    }
+  })
   .then(data => {
     if (data.error) {
       messageEl.textContent = `Error: ${data.error}`;
