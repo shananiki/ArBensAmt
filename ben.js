@@ -24,6 +24,10 @@ const pool = mysql.createPool({
   database: DB_DATABASE
 });
 
+// Set EJS as the templating engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -38,53 +42,56 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/tickets', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'tickets.html'));
-});
-
 // Route to create a new ticket (sends dummy data for now)
 app.get('/newTicket', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'newTicket.html'));
 });
 
-app.get('/viewTicket.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'viewTicket.html'));
-});
-
-
-// Get specific ticket
-app.get('/node/ben/getTicket/:ticketID', async (req, res) => {
+// Render a ticket view with data from MySQL
+app.get('/viewTicket/:ticketID', async (req, res) => {
   const ticketID = req.params.ticketID;
   const connection = await pool.getConnection();
 
-  const sql = `SELECT * FROM tickets where ticketID = ?`;
-  const [rows] = await connection.execute(sql, [ticketID]); 
+  try {
+    const sql = `SELECT * FROM tickets WHERE ticketID = ?`;
+    const [rows] = await connection.execute(sql, [ticketID]);
 
-  connection.release();
+    if (rows.length === 0) {
+      return res.status(404).send('No tickets found');
+    }
 
-  if (rows.length === 0) {
-    return res.status(404).send('No tickets found');
+    // Render the EJS template with ticket data
+    res.render('viewTicket', { ticket: rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  } finally {
+    connection.release();
   }
-  console.log(rows);
-  res.json(rows[0]);
 });
 
-// Get all tickets
-app.get('/node/ben/getTickets', async (req, res) => {
-
+// Render all tickets view
+app.get('/tickets', async (req, res) => {
   const connection = await pool.getConnection();
 
-  const sql = `SELECT * FROM tickets`;
-  const [rows] = await connection.execute(sql); 
+  try {
+    const sql = `SELECT * FROM tickets`;
+    const [rows] = await connection.execute(sql);
 
-  connection.release();
+    if (rows.length === 0) {
+      return res.status(404).send('No tickets found');
+    }
 
-  if (rows.length === 0) {
-    return res.status(404).send('No tickets found');
+    // Render the EJS template with all tickets
+    res.render('allTickets', { tickets: rows });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  } finally {
+    connection.release();
   }
-
-  res.json(rows);
 });
+
 
 // Add a new ticket
 app.post('/node/ben/newTicket', async (req, res) => {
