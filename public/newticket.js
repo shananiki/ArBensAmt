@@ -3,45 +3,36 @@ const messageEl = document.getElementById('message');
 const backToTicketsBtn = document.getElementById('back-to-tickets');
 
 
-newTicketForm.addEventListener('submit', (event) => {
+newTicketForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  const username = document.getElementById('username').value;
+  const creatorName = document.getElementById('username').value;
   const description = document.getElementById('description').value;
 
   const data = {
-    creatorName: username,
-    description: description,
+      creatorName: creatorName,
+      description: description
   };
 
-  fetch('/node/ben/newTicket', { // Replace with your actual endpoint
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
-  .then(response => {
-    if (response.ok) {
-      return response.json(); // Only proceed if response is OK
-    } else {
-      // Handle non-200 status codes
-      throw new Error(`Error: HTTP status code ${response.status}`);
-    }
-  })
-  .then(data => {
-    if (data.error) {
-      messageEl.textContent = `Error: ${data.error}`;
-    } else {
-      messageEl.textContent = 'Ticket wurde an das ArBensAmt übertragen!';
-      // Optionally clear the form after successful submission
-      newTicketForm.reset();
-    }
-  })
-  .catch(error => {
-    console.error('Error submitting ticket:', error);
-    messageEl.textContent = 'Etwas ist schiefgelaufen...';
-  });
+  try {
+      const response = await fetch('/node/ben/newTicket', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      });
+
+      if (response.status === 200) {
+          alert("Ticket wurde an Ben übertragen!");
+          messageEl.textContent = 'Ticket wurde an das ArBensAmt übertragen!';
+      } else {
+        alert("Es gab einen kleinen Fehler...");
+        messageEl.textContent = 'Error!';
+      }
+  } catch (error) {
+      console.error('Error:', error);
+  }
 });
 
 

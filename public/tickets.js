@@ -8,7 +8,11 @@ fetch('/node/ben/getTickets')
     tickets.forEach(ticket => {
         const ticketItem = document.createElement('div');
         ticketItem.classList.add('ticket');
-        ticketItem.innerHTML = `#${ticket.ticketID} - ${ticket.username} - ${ticket.description} - ${ticket.status}`;
+        ticketItem.innerHTML = `
+            <a href="viewTicket.html?ticketID=${ticket.ticketID}">
+                #${ticket.ticketID} - ${ticket.username} - ${ticket.description} - ${ticket.status}
+            </a>
+        `;
         ticketList.appendChild(ticketItem);
     });
 });
